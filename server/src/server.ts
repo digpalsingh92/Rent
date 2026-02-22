@@ -2,12 +2,13 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { ApiRoutes } from './route';
 import { env } from './config/env.config';
+import helmet from 'helmet';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
 app.use(cors({ origin: env.CORS_ORIGIN }));
 
 app.use('/api/v1', ApiRoutes);

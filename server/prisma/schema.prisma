@@ -6,11 +6,47 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PropertyRoleType {
+  OWNER
+  TENANT
+  MANAGER
+  ADMIN
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  FullName  String?
-  Password  String
+  fullName  String?
+  role      String   @default("USER")
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  ownedProperties Property[]
+  propertyRoles   PropertyRole[]
+
 }
+
+model Property {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  location    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  propertyRoles PropertyRole[]
+}
+model PropertyRole {
+  id         String   @id @default(uuid())
+  propertyId String
+  userId     String
+  role       PropertyRoleType
+  property   Property @relation(fields: [propertyId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([propertyId, userId])
+}
+

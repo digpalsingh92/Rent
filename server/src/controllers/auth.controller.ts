@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { successResponse } from "../utils/response";
 import { prisma } from "../config/Database.config"
 import bcrypt from 'bcrypt';
+import generateJwtToken from "../utils/helper";
 
 export const createUser = async (req: Request, res:Response) => {
-   const { email, password, fullName } = req.body;
+   const { fullName,email, password } = req.body;
 
    if (!email || !password || !fullName) {
       return res.status(400).json(successResponse("Missing required fields"));
@@ -21,9 +22,16 @@ export const createUser = async (req: Request, res:Response) => {
    const user = await prisma.user.create({
       data: {
          email,
-         Password: hashedPassword,
-         FullName: fullName
+         password: hashedPassword,
+         fullName: fullName,
+         role: "user",
       }
    });
-   res.status(201).json(successResponse("User registered successfully", user));
+   //user object without password
+   const { password: _, ...safeUser} = user;
+
+   //generate JWT token
+   const token = generateJwtToken({ id: user.id, role: user.role });
+
+   res.status(201).json(successResponse("User registered successfully", {user:safeUser, token}));
 }

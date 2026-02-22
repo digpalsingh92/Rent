@@ -18,4 +18,8 @@ const prisma = new PrismaClient({
       : [{ level: 'error', emit: 'stdout' }],
 });
 
+prisma.$connect()
+  .then(() => console.log(' DB connected successfully'))
+  .catch((err: Error) => console.error('❌ DB connection failed:', err.message));
+
 export { prisma };
