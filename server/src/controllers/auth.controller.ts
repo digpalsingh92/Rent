@@ -3,17 +3,19 @@ import { successResponse } from "../utils/response";
 import { prisma } from "../config/Database.config"
 import bcrypt from 'bcrypt';
 import generateJwtToken from "../utils/helper";
+import { StatusCodes } from "../constants/StatusCodes";
+
 
 export const createUser = async (req: Request, res:Response) => {
    const { fullName,email, password } = req.body;
 
    if (!email || !password || !fullName) {
-      return res.status(400).json(successResponse("Missing required fields"));
+      return res.status(StatusCodes.BAD_REQUEST).json(successResponse("Missing required fields"));
    }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-        return res.status(400).json(successResponse("Email already in use"));
+        return res.status(StatusCodes.BAD_REQUEST).json(successResponse("Email already in use"));
     }
 
     const saltRounds = 10;
@@ -33,5 +35,5 @@ export const createUser = async (req: Request, res:Response) => {
    //generate JWT token
    const token = generateJwtToken({ id: user.id, role: user.role });
 
-   res.status(201).json(successResponse("User registered successfully", {user:safeUser, token}));
+   res.status(StatusCodes.CREATED).json(successResponse("User registered successfully", {user:safeUser, token}));
 }
