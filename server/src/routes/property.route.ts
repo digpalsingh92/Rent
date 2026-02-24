@@ -6,7 +6,7 @@ import { validate } from "../middleware/validate.middleware";
 const router = Router();
 
 
-router.post('/register', validate(createUserSchema), createUser);
+router.post('/createProperty', validate(createUserSchema), createUser);
 router.post('/login', validate(loginUserSchema), loginUser);
 
 export { router as authRoutes };

@@ -13,6 +13,12 @@ enum PropertyRoleType {
   ADMIN
 }
 
+enum PropertyStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -21,7 +27,6 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   ownedProperties Property[]
   propertyRoles   PropertyRole[]
 
@@ -32,11 +37,20 @@ model Property {
   title       String
   description String
   price       Float
+  currency    String
+  status      PropertyStatus @default(AVAILABLE)
+
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id])
-  location    String
+
+  location    PropertyLocation?
+  features    PropertyFeature?
+  images      PropertyImage[]
+  amenities   PropertyAmenity[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
   propertyRoles PropertyRole[]
 }
 model PropertyRole {
@@ -50,3 +64,51 @@ model PropertyRole {
   @@unique([propertyId, userId])
 }
 
+model PropertyLocation {
+  id         String  @id @default(uuid())
+  address    String
+  city       String
+  state      String
+  zipCode    String
+  latitude   Float
+  longitude  Float
+
+  propertyId String  @unique
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model PropertyFeature {
+  id         String  @id @default(uuid())
+  bedrooms   Int
+  bathrooms  Float
+  areaSqft   Int
+  yearBuilt  Int
+
+  propertyId String  @unique
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model PropertyImage {
+  id         String  @id @default(uuid())
+  url        String
+
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model PropertyAmenity {
+  propertyId String
+  amenityId  String
+
+  property Property @relation(fields: [propertyId], references: [id])
+  amenity  Amenity  @relation(fields: [amenityId], references: [id])
+
+  @@id([propertyId, amenityId])
+}
+
+model Amenity {
+  id        String  @id @default(uuid())
+  name      String  @unique
+
+  properties PropertyAmenity[]
+}

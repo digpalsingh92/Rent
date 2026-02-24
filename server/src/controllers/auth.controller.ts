@@ -37,3 +37,29 @@ export const createUser = async (req: Request, res:Response) => {
 
    res.status(StatusCodes.CREATED).json(successResponse("User registered successfully", {user:safeUser, token}));
 }
+
+export const loginUser = async (req: Request, res:Response) => {
+   const { email, password } = req.body;
+
+   if (!email || !password) {
+      return res.status(StatusCodes.BAD_REQUEST).json(successResponse("Missing required fields"));
+   }
+
+   const user = await prisma.user.findUnique({ where: { email } });
+   if (!user) {
+      return res.status(StatusCodes.BAD_REQUEST).json(successResponse("Invalid email or password"));
+   }
+
+   const isPasswordValid = await bcrypt.compare(password, user.password);
+   if (!isPasswordValid) {
+      return res.status(StatusCodes.BAD_REQUEST).json(successResponse("Invalid email or password"));
+   }
+
+   //user object without password
+   const { password: _, ...safeUser} = user;
+
+   //generate JWT token
+   const token = generateJwtToken({ id: user.id, role: user.role });
+
+   res.status(StatusCodes.OK).json(successResponse("Login successfull", {user:safeUser, token}));
+}
