@@ -1,12 +1,10 @@
 import { Router } from "express";
-import { createUser, loginUser } from "../controllers/auth.controller";
-import { createUserSchema, loginUserSchema } from "../validations/auth.validations";
 import { validate } from "../middleware/validate.middleware";
+import { createProperty } from "../controllers/property.controller";
 
 const router = Router();
 
 
-router.post('/createProperty', validate(createUserSchema), createUser);
-router.post('/login', validate(loginUserSchema), loginUser);
+router.post('/createProperty', createProperty);
 
-export { router as authRoutes };
+export { router as propertyRoutes };

@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.config';
-import { UserRole, PropertyPermission, rolePermissions } from './permission';
+import {
+  PropertyPermission,
+  PropertyRole,
+  SystemRole,
+  propertyRolePermissions,
+  systemRolePermissions,
+} from './permission';
 
 interface User {
   id: string;
@@ -17,9 +23,16 @@ const generateJwtToken = (user: User) => {
 };
 export default generateJwtToken;
 
-export function hasPermission(
-  role: UserRole,
+export function hasPropertyRolePermission(
+  role: PropertyRole,
   permission: PropertyPermission
 ): boolean {
-  return rolePermissions[role]?.includes(permission) ?? false;
+  return propertyRolePermissions[role]?.includes(permission) ?? false;
+}
+
+export function hasSystemRolePermission(
+  role: SystemRole,
+  permission: PropertyPermission
+): boolean {
+  return systemRolePermissions[role]?.includes(permission) ?? false;
 }

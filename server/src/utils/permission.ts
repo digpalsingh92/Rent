@@ -1,6 +1,9 @@
+export enum SystemRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
 
-
-export enum UserRole {
+export enum PropertyRole {
     OWNER = "OWNER",
     TENANT = "TENANT",
     MANAGER = "MANAGER",
@@ -23,8 +26,30 @@ export enum PropertyPermission {
 }
 
 
-export const rolePermissions: Record<UserRole, PropertyPermission[]> = {
-    [UserRole.OWNER]: [
+export const propertyRolePermissions: Record<PropertyRole, PropertyPermission[]> = {
+    [PropertyRole.OWNER]: [
+        PropertyPermission.READ_PROPERTY,
+        PropertyPermission.UPDATE_PROPERTY,
+        PropertyPermission.DELETE_PROPERTY,
+        PropertyPermission.ADD_TENANT,
+        PropertyPermission.REMOVE_TENANT,
+        PropertyPermission.VIEW_TENANTS,
+        PropertyPermission.ADD_MANAGER,
+        PropertyPermission.REMOVE_MANAGER,
+    ],
+    [PropertyRole.MANAGER]: [
+        PropertyPermission.READ_PROPERTY,
+        PropertyPermission.ADD_TENANT,
+        PropertyPermission.REMOVE_TENANT,
+        PropertyPermission.VIEW_TENANTS,
+    ],
+    [PropertyRole.TENANT]: [
+        PropertyPermission.READ_PROPERTY,
+    ]
+}
+
+export const systemRolePermissions: Record<SystemRole, PropertyPermission[]> = {
+    [SystemRole.ADMIN]: [
         PropertyPermission.CREATE_PROPERTY,
         PropertyPermission.READ_PROPERTY,
         PropertyPermission.UPDATE_PROPERTY,
@@ -35,13 +60,7 @@ export const rolePermissions: Record<UserRole, PropertyPermission[]> = {
         PropertyPermission.ADD_MANAGER,
         PropertyPermission.REMOVE_MANAGER,
     ],
-    [UserRole.MANAGER]: [
-        PropertyPermission.READ_PROPERTY,
-        PropertyPermission.ADD_TENANT,
-        PropertyPermission.REMOVE_TENANT,
-        PropertyPermission.VIEW_TENANTS,
+    [SystemRole.USER]: [
+        PropertyPermission.CREATE_PROPERTY,
     ],
-    [UserRole.TENANT]: [
-        PropertyPermission.READ_PROPERTY,
-    ]
-}
+};
