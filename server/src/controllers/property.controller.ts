@@ -88,7 +88,6 @@ export const createProperty = async (req: Request, res: Response) => {
         }
       });
 
-      // 🔥 Create OWNER role automatically
       await tx.propertyRole.create({
         data: {
           propertyId: newProperty.id,

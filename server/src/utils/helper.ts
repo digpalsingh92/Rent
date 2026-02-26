@@ -10,13 +10,15 @@ import {
 
 interface User {
   id: string;
-  role: string;
+  systemRole: string;
+  email: string;
 }
 
 const generateJwtToken = (user: User) => {
   return jwt.sign(
     { id: user.id,
-     role: user.role},
+      email: user.email,
+     role: user.systemRole},
     env.JWT_SECRET as string,
     {expiresIn: '7d'}
 );

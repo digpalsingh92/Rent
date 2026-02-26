@@ -26,14 +26,14 @@ export const createUser = async (req: Request, res:Response) => {
          email,
          password: hashedPassword,
          fullName: fullName,
-         role: "user",
+         systemRole: "USER",
       }
    });
    //user object without password
    const { password: _, ...safeUser} = user;
 
    //generate JWT token
-   const token = generateJwtToken({ id: user.id, role: user.role });
+   const token = generateJwtToken({ id: user.id, systemRole: user.systemRole, email: user.email });
 
    res.status(StatusCodes.CREATED).json(successResponse("User registered successfully", {user:safeUser, token}));
 }
@@ -59,7 +59,7 @@ export const loginUser = async (req: Request, res:Response) => {
    const { password: _, ...safeUser} = user;
 
    //generate JWT token
-   const token = generateJwtToken({ id: user.id, role: user.role });
+   const token = generateJwtToken({ id: user.id, systemRole: user.systemRole, email: user.email });
 
    res.status(StatusCodes.OK).json(successResponse("Login successfull", {user:safeUser, token}));
 }
